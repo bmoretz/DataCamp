@@ -14,3 +14,14 @@ ggAcf(pigs) +
 
 Box.test(pigs, lag = 24, fitdf = 0, type = "Lj")
 
+# Plot the original series
+autoplot(goog)
+
+# Plot the differenced series
+autoplot(diff(goog))
+
+# ACF of the differenced series
+ggAcf(diff(goog))
+
+# Ljung-Box test of the differenced series
+Box.test(diff(goog), lag = 10, type = "Ljung")
