@@ -29,3 +29,44 @@ moments_boudt <- set.portfolio.moments(R = asset_returns, portfolio = port_spec,
 moments_boudt$sigma == extractCovariance(fit)
 
 
+# Define custom moment function
+moments_robust <- function(R, portfolio) {
+  out <- list()
+  out$sigma <- cov.rob(R, method = "mcd")$cov
+  out
+}
+
+# Estimate the portfolio moments using the function you just defined 
+moments <- moments_robust(R = asset_returns, portfolio = port_spec)
+
+# Check the moment estimate
+cov.rob(asset_returns, method = "mcd")$cov == moments$sigma
+
+# Run the optimization with custom moment estimates
+opt_custom <- optimize.portfolio(R = asset_returns, portfolio = port_spec, optimize_method = "random", rp = rp, momentFUN = "moments_robust")
+
+# Print the results of the optimization with custom moment estimates
+print(opt_custom)
+
+# Run the optimization with sample moment estimates
+opt_sample <- optimize.portfolio(R = asset_returns, portfolio = port_spec, optimize_method = "random", rp = rp)
+
+# Print the results of the optimization with sample moment estimates
+print(opt_sample)
+
+# Custom annualized portfolio standard deviation
+pasd <- function(R, weights, sigma, scale = 12) {
+  sqrt(as.numeric(as.numeric(t(weights)) %*% sigma %*% weights)) * sqrt(scale)
+}
+
+# Add custom objective to portfolio specification
+port_spec <- add.objective(portfolio = port_spec, type = "risk", name = "pasd")
+
+# Print the portfolio specificaton object
+print(port_spec)
+
+# Run the optimization
+opt <- optimize.portfolio(R = asset_returns, portfolio = port_spec, momentFUN = set_sigma, optimize_method = "random", rp = rp)
+
+# Print the results of the optimization
+print(opt)
