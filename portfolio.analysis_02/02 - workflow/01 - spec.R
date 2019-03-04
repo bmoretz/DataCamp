@@ -47,3 +47,21 @@ opt_rebal <- optimize.portfolio.rebalancing(R = asset_returns, portfolio = port_
 # Print the output of the optimization backtest
 print(opt_rebal)
 
+# Extract the objective measures for the single period optimization
+extractObjectiveMeasures(opt)
+
+# Extract the objective measures for the optimization backtest
+extractObjectiveMeasures(opt_rebal)
+
+# Extract the optimal weights for the single period optimization
+extractWeights(opt)
+
+# Chart the weights for the single period optimization
+chart.Weights(opt)
+
+# Extract the optimal weights for the optimization backtest
+extractWeights(opt_rebal)
+
+# Chart the weights for the optimization backtest
+chart.Weights(opt_rebal)
+
