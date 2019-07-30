@@ -1,3 +1,6 @@
 install.packages("Quandl")
 install.packages("quantlib")
 install.packages("fpp2")
+install.packages("broom")
+install.packages("sigr")
+install.packages("vtreat")
