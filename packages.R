@@ -4,3 +4,5 @@ install.packages("fpp2")
 install.packages("broom")
 install.packages("sigr")
 install.packages("vtreat")
+install.packages("mgcv")
+
