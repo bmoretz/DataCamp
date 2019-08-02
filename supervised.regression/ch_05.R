@@ -122,3 +122,43 @@ elog %>%
    summarize(ntrees.train = which.min(train_rmse_mean), # find the index of min(train_rmse_mean)
              ntrees.test = which.min(test_rmse_mean)) # find the index of min(test_rmse_mean)
 
+# The number of trees to use, as determined by xgb.cv
+ntrees <- 84
+
+# Run xgboost
+bike_model_xgb <- xgboost(data = as.matrix(bikesJuly.treat), # training data as matrix
+                   label = bikesJuly$cnt, # column of outcomes
+                   nrounds = ntrees, # number of trees to build
+                   objective = "reg:linear", # objective
+                   eta = 0.3,
+                   depth = 6,
+                   verbose = 0 # silent
+)
+
+# Make predictions
+bikesAugust$pred <- predict(bike_model_xgb, as.matrix(bikesAugust.treat))
+
+# Plot predictions (on x axis) vs actual bike rental count
+ggplot(bikesAugust, aes(x = pred, y = cnt)) +
+  geom_point() +
+  geom_abline()
+
+# bikesAugust is in the workspace
+str(bikesAugust)
+
+# Calculate RMSE
+bikesAugust %>%
+  mutate(residuals = cnt - pred) %>%
+  summarize(rmse = sqrt(mean(residuals ^ 2)))
+
+# Plot predictions and actual bike rentals as a function of time (days)
+bikesAugust %>%
+  mutate(instant = (instant - min(instant)) / 24) %>% # set start to 0, convert unit to days
+  gather(key = valuetype, value = value, cnt, pred) %>%
+  filter(instant < 14) %>% # first two weeks
+  ggplot(aes(x = instant, y = value, color = valuetype, linetype = valuetype)) +
+  geom_point() +
+  geom_line() +
+  scale_x_continuous("Day", breaks = 0:14, labels = 0:14) +
+  scale_color_brewer(palette = "Dark2") +
+  ggtitle("Predicted August bike rentals, Gradient Boosting model")
