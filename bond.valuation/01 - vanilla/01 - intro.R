@@ -20,9 +20,3 @@ pv2 <- fv2 / (1 + r) ^ 2
 print(pv1)
 print(pv2)
 
-# Create vector of cash flows
-cf <- c(5, 5, 5, 5, 105)
-
-# Convert to data frame
-cf <- data.frame(cf)
-cf
